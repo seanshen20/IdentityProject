@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using IdentityDb.Data;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -43,6 +44,15 @@ namespace IdentityDb
             })
                 .AddEntityFrameworkStores<AppDbContext>()
                 .AddDefaultTokenProviders();
+            
+            services.AddAuthorization(config => {
+                
+                var defaultPolicyBuilder = new AuthorizationPolicyBuilder();
+                var defaultPolicy = defaultPolicyBuilder
+                    .RequireAuthenticatedUser()
+                    .Build();
+                config.DefaultPolicy = defaultPolicy;
+            });
 
             services.ConfigureApplicationCookie(config =>
             {

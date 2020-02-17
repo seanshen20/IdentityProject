@@ -19,12 +19,26 @@ namespace Id4Project.Controllers
             return View();
         }
 
+        [Authorize(Policy = "Claim.DOB")]
+         public IActionResult SecretPolicy()
+        {
+            return View("Secret");
+        }
+
+        [Authorize(Roles = "Admin")]
+         public IActionResult SecretRole()
+        {
+            return View("Secret");
+        }
+
         public IActionResult Authenticate()
         {
             var grandmaClaims = new List<Claim>()
             {
                 new Claim(ClaimTypes.Name, "Bob"),
                 new Claim(ClaimTypes.Email, "Bob@gmail.com"),
+                new Claim(ClaimTypes.DateOfBirth, "11/11/2000"),
+                new Claim(ClaimTypes.Role, "Admin"),
             };
 
             var licenseClaims = new List<Claim>()
