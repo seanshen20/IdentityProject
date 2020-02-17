@@ -50,11 +50,12 @@ namespace IdentityDb
                 config.LoginPath = "/Homes/Login";
             });
 
-            
-            services.AddMailKit(cfg => {
+
+            services.AddMailKit(cfg =>
+            {
                 var mailKitOptions = _config.GetSection("Email").Get<MailKitOptions>();
                 cfg.UseMailKit(mailKitOptions);
-            })
+            });
             services.AddControllersWithViews();
         }
 
