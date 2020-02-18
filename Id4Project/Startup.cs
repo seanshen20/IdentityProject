@@ -4,10 +4,15 @@ using System.Linq;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Id4Project.AuthorizationRequirements;
+using Id4Project.Controllers;
+using Id4Project.CustomerPolicyProvider;
+using Id4Project.Transformer;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 
@@ -33,7 +38,7 @@ namespace Id4Project
                 //     .RequireAuthenticatedUser()
                 //     .RequireClaim(ClaimTypes.DateOfBirth) // not authorized
                 //     .Build();
-                // config.DefaultPolicy = defaultPolicy;
+                // config.DefaultPolicy = defaultPolicy ;
 
                 // config.AddPolicy("ClaimDob", policyBuilder => 
                 // {
@@ -49,12 +54,24 @@ namespace Id4Project
                     policyBuilder.RequireCustomClaim(ClaimTypes.Name);
                 });
             });
-
+            services.AddSingleton<IAuthorizationPolicyProvider, CustomAuthorizationPolicyProvider>();
+            services.AddScoped<IAuthorizationHandler, SecurityLevelHandler>();
             services.AddScoped<IAuthorizationHandler, CustomRequirementClaimHandler>();
+            services.AddScoped<IAuthorizationHandler, CookieJarAuthorizationHandler>();
+            services.AddScoped<IClaimsTransformation, ClaimsTransformation>();
 
 
 
             services.AddControllersWithViews();
+            // (config => {
+            //     var defaultPolicyBuilder = new AuthorizationPolicyBuilder();
+            //     var defaultPolicy = defaultPolicyBuilder
+            //         .RequireAuthenticatedUser()
+            //         .Build();
+
+            //     // global authorization filter
+            //     config.Filters.Add(new AuthorizeFilter(defaultPolicy));
+            // });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

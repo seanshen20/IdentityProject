@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
+using Id4Project.CustomerPolicyProvider;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -37,6 +38,19 @@ namespace Id4Project.Controllers
             return View("Secret");
         }
 
+        [SecurityLevel(5)]
+        public IActionResult SecretLevel()
+        {
+            return View("Secret");
+        }
+
+        [SecurityLevel(10)]
+        public IActionResult SecretHigherLevel()
+        {
+            return View("Secret");
+        }
+
+        [AllowAnonymous]
         public IActionResult Authenticate()
         {
             var grandmaClaims = new List<Claim>()
@@ -45,6 +59,7 @@ namespace Id4Project.Controllers
                 new Claim(ClaimTypes.Email, "Bob@gmail.com"),
                 new Claim(ClaimTypes.DateOfBirth, "11/11/2000"),
                 new Claim(ClaimTypes.Role, "Admin"),
+                new Claim(DynamicPolicies.SecurityLevel, "7"),
             };
 
             var licenseClaims = new List<Claim>()
@@ -66,7 +81,7 @@ namespace Id4Project.Controllers
         {
             var builder = new AuthorizationPolicyBuilder("Schema");
             var customPolicy = builder.RequireClaim("Hello").Build();
-            var result = await service.AuthorizeAsync(User, customPolicy);
+            var result = await _authorizationService.AuthorizeAsync(User, customPolicy);
 
             if (result.Succeeded)
             {
