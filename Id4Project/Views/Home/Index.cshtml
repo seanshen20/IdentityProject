@@ -1,4 +1,11 @@
 <h1>Home Page</h1>
+@using Microsoft.AspNetCore.Authorization
+@inject IAuthorizationService authorizationService
+
+@if((await authorizationService.AuthorizeAsync(User, "Claim.DOB")).Succeeded)
+{
+    <h1>User has DoB claim</h1>
+}
 @foreach (var claim in @Context.User.Claims)
 {
     <p>@claim.Value</p>
